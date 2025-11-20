@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""Create a timestamped diagrams.net editor page from diagram.xml."""
+"""Render a timestamped diagrams.net editor page from any draw.io XML."""
 
 from argparse import ArgumentParser
 from datetime import datetime, timezone
 from pathlib import Path
 from string import Template
+
+
+DEFAULT_IFRAME_URL = "https://embed.diagrams.net/?embed=1&ui=atlas&spin=1&proto=json"
 
 
 HTML_TEMPLATE = Template(
@@ -13,7 +16,7 @@ HTML_TEMPLATE = Template(
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Diagram Snapshot ${timestamp}</title>
+    <title>${title}</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; background: #f8f9fa; }
         .header { padding: 1rem 1.5rem; border-bottom: 1px solid #dee2e6; background: #fff; }
@@ -24,8 +27,8 @@ HTML_TEMPLATE = Template(
 </head>
 <body>
     <div class="header">
-        <h1>Diagram Snapshot</h1>
-        <p>Generated ${iso} from <code>diagram.xml</code>.</p>
+        <h1>${title}</h1>
+        <p>${note}</p>
     </div>
     <iframe id="diagram-editor" frameborder="0"></iframe>
     <script>
@@ -52,7 +55,7 @@ HTML_TEMPLATE = Template(
             }
         });
 
-        iframe.src = 'https://embed.diagrams.net/?embed=1&ui=atlas&spin=1&proto=json';
+        iframe.src = '${iframe_url}';
     </script>
 </body>
 </html>
@@ -60,13 +63,13 @@ HTML_TEMPLATE = Template(
 )
 
 
-def generate_html(output_path: Path) -> Path:
-    diagram_xml = Path("diagram.xml").read_text(encoding="utf-8")
-    now = datetime.now(timezone.utc)
+def generate_html(diagram_path: Path, output_path: Path, *, title: str, note: str, iframe_url: str) -> Path:
+    diagram_xml = diagram_path.read_text(encoding="utf-8")
     html = HTML_TEMPLATE.substitute(
         diagram_xml=diagram_xml,
-        iso=now.isoformat(timespec="seconds"),
-        timestamp=now.strftime("%Y%m%d_%H%M%S"),
+        title=title,
+        note=note,
+        iframe_url=iframe_url,
     )
     output_path.write_text(html, encoding="utf-8")
     return output_path
@@ -74,15 +77,25 @@ def generate_html(output_path: Path) -> Path:
 
 def main() -> None:
     parser = ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--output",
-        help="Optional custom output file. Defaults to diagram_editor_<timestamp>.html",
-    )
+    parser.add_argument("--diagram", default="diagram.xml", help="Path to the draw.io XML file to embed")
+    parser.add_argument("--output", help="Custom output HTML file; defaults to diagram_editor_<timestamp>.html")
+    parser.add_argument("--title", default="Diagram Snapshot", help="Page title / heading")
+    parser.add_argument("--note", help="Optional paragraph under the heading")
+    parser.add_argument("--iframe-url", default=DEFAULT_IFRAME_URL, help="diagrams.net embed URL")
     args = parser.parse_args()
 
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    now = datetime.now(timezone.utc)
+    timestamp = now.strftime("%Y%m%d_%H%M%S")
+    note = args.note or f"Generated {now.isoformat(timespec='seconds')} from {Path(args.diagram).name}."
     target = Path(args.output) if args.output else Path(f"diagram_editor_{timestamp}.html")
-    result = generate_html(target)
+
+    result = generate_html(
+        Path(args.diagram),
+        target,
+        title=args.title,
+        note=note,
+        iframe_url=args.iframe_url,
+    )
     print(f"Wrote {result}")
 
 
