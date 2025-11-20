@@ -21,12 +21,14 @@ This project hosts a single-page helper that embeds the diagrams.net (draw.io) e
 - Before importing into draw.io, you can run `python3 validate_xml.py` to ensure the XML is well-formed.
 
 ## Generating Timestamped Snapshots
-- Run `python3 generate_html.py` to produce `diagram_editor_<timestamp>.html` embedding `diagram.xml`.
-- Use CLI flags to generalize the export:
+- Run `python3 generate_html.py` to produce `snapshots/diagram_editor_<timestamp>.html` embedding the latest XML.
+- The script also maintains `snapshots/manifest.json` and regenerates `snapshots/index.html`, which lists every snapshot (newest first) with its metadata.
+- Useful CLI flags:
   - `--diagram other.xml` – embed a different draw.io file.
-  - `--title "My Architecture"` / `--note "Generated for demo"` – customize the header text.
+  - `--title "My Architecture"` / `--note "Generated for demo"` – customize the snapshot header.
   - `--iframe-url <url>` – swap to another diagrams.net deployment if needed.
-  - `--output custom.html` – control the output filename.
+  - `--snapshot-dir custom_dir` / `--catalog custom_dir/index.html` – change where snapshots and the catalog live.
+  - `--output custom.html` – override the auto-generated filename (must reside inside the snapshot dir to appear in the catalog).
 
 ## Generating New Diagrams via AI
 If you ask an AI model to produce a new diagram, point it to `DIAGRAM_GUIDE.md`. The guide explains:
