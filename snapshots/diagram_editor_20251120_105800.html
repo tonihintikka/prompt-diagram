@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Diagram Flow</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; background: #f8f9fa; }
+        .header { padding: 1rem 1.5rem; border-bottom: 1px solid #dee2e6; background: #fff; }
+        h1 { margin: 0; font-size: 1.4rem; }
+        p { margin: 0.25rem 0 0; color: #6c757d; }
+        iframe { flex: 1; border: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AI Diagram Flow</h1>
+        <p>Ideasta &gt; AI CLI &gt; draw.io &gt; editori</p>
+    </div>
+    <iframe id="diagram-editor" frameborder="0"></iframe>
+    <script>
+        const diagramXML = `<mxfile host="app.diagrams.net" modified="2025-11-20T11:05:00.000Z" agent="AI-Generator" etag="process-flow" version="24.7.6" type="device">
+  <diagram id="ai_flow" name="Page-1">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="user" value="Käyttäjä / idea" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="60" y="260" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="ai_cli" value="AI CLI -agentti&lt;br&gt;(Codex, Claude, Cursor)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="250" y="260" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="diagram_proc" value="Tuottaa draw.io XML:n&lt;br&gt;(diagram.xml tms.)" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;size=0.25;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="510" y="260" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="editor" value="Upotettu editori&lt;br&gt;(index.html + diagrams.net)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="770" y="260" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="export" value="Muokkaa ja exportoi&lt;br&gt;haluttuun muotoon" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="250" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="generator" value="Snapshot-generaattori&lt;br&gt;(generate_html.py)" style="shape=card;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="540" y="70" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="catalog" value="snapshots/index.html&lt;br&gt;Historia + linkit" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="800" y="70" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="steps" value="Prosessi:&lt;br&gt;1. Chattaa idea agentille&lt;br&gt;2. Agentti luo draw.io XML:n&lt;br&gt;3. XML avataan editorissa&lt;br&gt;4. Muokkaa + exportoi / tallenna snapshot" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="260" y="430" width="520" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="1. Chattaa idea" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="user" target="ai_cli">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="2. Generoi kaavio" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="ai_cli" target="diagram_proc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="3. Lataa editoriin" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="diagram_proc" target="editor">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="4. Muokkaa &amp;&lt;br&gt;exportoi" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="editor" target="export">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="Tallentaa XML:n" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;" edge="1" parent="1" source="diagram_proc" target="generator">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="Päivittää listan" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;" edge="1" parent="1" source="generator" target="catalog">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="Linkit aiempiin kaavioihin" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;" edge="1" parent="1" source="catalog" target="editor">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
+`;
+        const iframe = document.getElementById('diagram-editor');
+
+        function postMessage(message) {
+            if (iframe.contentWindow) {
+                iframe.contentWindow.postMessage(JSON.stringify(message), '*');
+            }
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.source !== iframe.contentWindow || !event.data) return;
+            let msg = event.data;
+            if (typeof msg === 'string') {
+                try { msg = JSON.parse(msg); } catch (_) { return; }
+            }
+            if (typeof msg !== 'object') return;
+            if (msg.event === 'configure') {
+                postMessage({ action: 'configure', config: { defaultFonts: [], mathEnabled: false } });
+            } else if (msg.event === 'init') {
+                postMessage({ action: 'load', xml: diagramXML });
+            }
+        });
+
+        iframe.src = 'https://embed.diagrams.net/?embed=1&ui=atlas&spin=1&proto=json';
+    </script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative Diagram Editor</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+            background-color: #ffffff;
+        }
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #212529;
+        }
+        p {
+            margin: 0.25rem 0 0 0;
+            color: #6c757d;
+        }
+        .editor-container {
+            flex-grow: 1;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Generative Diagram Editor</h1>
+        <p>Final Test: The diagram XML is embedded directly in this page. You can now edit it and export it via "File &gt; Export as...".</p>
+    </div>
+
+    <iframe id="diagram-editor" class="editor-container" frameborder="0"></iframe>
+
+    <script>
+        // FINAL TEST: The XML content is now embedded directly as a string
+        // to bypass any issues with the fetch() API or server file delivery.
+        const diagramXML = `<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="embed.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" version="29.1.0">
+  <diagram id="vero_flow" name="Page-1">
+    <mxGraphModel dx="707" dy="968" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="widget" parent="1" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="" vertex="1">
+          <mxGeometry height="100" width="80" x="120" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="api" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="API-kerros" vertex="1">
+          <mxGeometry height="90" width="160" x="300" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="search" parent="1" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#d5e8d4;strokeColor=#82b366;" value="Azure AI Search -haku" vertex="1">
+          <mxGeometry height="90" width="160" x="570" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="search_desc" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" value="Hybridihaku (vektorit + avainsanat)&lt;br&gt;käyttää &lt;b&gt;Pore&lt;/b&gt;-sisältöä" vertex="1">
+          <mxGeometry height="40" width="180" x="560" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="genai" parent="1" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;size=0.25;fillColor=#e1d5e7;strokeColor=#9673a6;" value="GenAI-kerros (LLM)&lt;br&gt;RAG-malli" vertex="1">
+          <mxGeometry height="90" width="160" x="840" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="genai_desc" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" value="Oletus: &lt;b&gt;GPT-5.1&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="110" x="865" y="355" as="geometry" />
+        </mxCell>
+        <mxCell id="safety" parent="1" style="shape=shield;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="Azure AI&lt;br&gt;Content Safety" vertex="1">
+          <mxGeometry height="90" width="160" x="1110" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="foundry_group" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#d6b656;dashed=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;" value="Azure AI Foundry" vertex="1">
+          <mxGeometry height="170" width="550" x="550" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="catalog" parent="foundry_group" style="shape=card;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Mallikirjasto&lt;br&gt;(OpenAI, Meta, Mistral..)" vertex="1">
+          <mxGeometry height="80" width="150" x="20" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="prompt_flow" parent="foundry_group" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];strokeColor=none;fillColor=none;" value="&lt;i&gt;Prompt Flow, arviointi, käyttöönotto, monitorointi&lt;/i&gt;" vertex="1">
+          <mxGeometry height="40" width="300" x="180" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="scope" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#f5f5f5;strokeColor=#666666;" value="&lt;b&gt;Demon rajaukset&lt;/b&gt;&lt;br&gt;- Vain julkinen websisältö&lt;br&gt;- Azure-resurssit EU-alueella&lt;br&gt;- Keskustelukonteksti on väliaikainen" vertex="1">
+          <mxGeometry height="140" width="220" x="230" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="widget" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="api" value="1. Kysymys">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="search" value="2. Haku">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="search" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="genai" value="3. Haetut&lt;br&gt;katkelmat">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="genai" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="safety" value="4. Generoitu&lt;br&gt;vastaus">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="safety" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="api" value="5. Tarkistettu vastaus">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="widget" value="6. Lopullinen vastaus&lt;br&gt;+ lähteet">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="foundry_group" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;" target="genai" value="Orkestraatio">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="catalog" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;" target="genai" value="Tarjoaa&lt;br&gt;vaihdettavan mallin">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;&quot;&gt;Käyttöliittymä / Chat-widget&lt;/span&gt;&lt;br style=&quot;forced-color-adjust: none; color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;&quot;&gt;(websivui)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="180" x="100" y="370" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
+`;
+
+        const iframe = document.getElementById('diagram-editor');
+
+        function postMessage(message) {
+            if (iframe.contentWindow) {
+                iframe.contentWindow.postMessage(JSON.stringify(message), '*');
+            }
+        }
+
+        window.addEventListener('message', (e) => {
+            if (e.source !== iframe.contentWindow || !e.data) return;
+            let msg = e.data;
+            if (typeof msg === 'string') {
+                try {
+                    msg = JSON.parse(msg);
+                } catch (err) {
+                    return; 
+                }
+            }
+
+            if (typeof msg !== 'object') return;
+
+            if (msg.event === 'configure') {
+                postMessage({
+                    action: 'configure',
+                    config: {
+                        defaultFonts: [],
+                        mathEnabled: false
+                    }
+                });
+            } else if (msg.event === 'init') {
+                postMessage({ action: 'load', xml: diagramXML });
+            }
+        });
+
+        function main() {
+            const editorUrl = 'https://embed.diagrams.net/?embed=1&ui=atlas&spin=1&proto=json';
+            iframe.setAttribute('src', editorUrl);
+        }
+
+        main();
+    </script>
+
+</body>
+</html>
