@@ -1,36 +1,25 @@
 # Diagram Generation Guide
 
-Tämä projektin kaavio avataan ja muokataan draw.io / diagrams.net -editorissa. Alla on reunaehdot seuraaville AI-avustajille tai työkaluajoille, jotta tuotettu XML toimii suoraan editorissa ilman lisäkorjauksia.
+Keep the diagram XML inside draw.io-compatible bounds so `index.html` can embed it without fixes.
 
-## 1. Tiedostomuoto
-- **Käärintä:** Kaikki mallit pitää toimittaa `mxfile`-juurielementissä. Sisälle tulee vähintään yksi `<diagram>`-elementti, jonka sisällä varsinainen `<mxGraphModel>` asuu (katso `diagram.xml`).
-- **Meta-atribuutit:** `mxfile` tarvitsee vähintään attribuutit `host`, `modified`, `agent`, `etag`, `version` ja `type`. Arvoilla ei ole tiukkaa validointia, mutta ne helpottavat editoria.
-- **Rakenteen järjestys:** `mxGraphModel > root` pitää aina aloittaa solmuilla `id="0"` ja `id="1"`. Kaikki muut vertexit tai edget viittaavat `parent="1"` tai muuhun olemassa olevaan konttiin.
+## Structure
+- Wrap every export as `<mxfile><diagram><mxGraphModel>…` and keep the metadata attrs (`host`, `modified`, `agent`, `etag`, `version`, `type`).
+- Start `<root>` with ids `0` and `1`; all other cells must reference an existing `parent`.
+- Stick to `pageWidth="1200"` / `pageHeight="900"` so the iframe viewport lines up.
 
-## 2. Solmut ja id:t
-- Jokaisella `mxCell`-solmulla on yksilöllinen `id`. Käytä kuvaavia nimiä (esim. `widget`, `api`, `genai`).
-- Vertexit (`vertex="1"`) vaativat sisäisen `mxGeometry`-elementin, jossa on `x`, `y`, `width`, `height`.
-- Edge-solmut (`edge="1"`) viittaavat lähteeseen ja kohteeseen `source`- ja `target`-attribuuteilla. Käytä `mxGeometry relative="1"` -muotoa ellei ole erityistä reititystarvetta.
+## Cells
+- Unique `id` per `mxCell`; use readable labels like `widget`, `api`, `genai`.
+- Vertices (`vertex="1"`) need an `mxGeometry` block with `x`, `y`, `width`, `height`.
+- Edges (`edge="1"`) define `source`, `target`, and usually `mxGeometry relative="1"`.
+- Groups/containers are vertices; their children set `parent` to that container and use local coordinates.
 
-## 3. Groupit ja hierarkia
-- Kontit kuten "Azure AI Foundry" toteutetaan vertexinä, jonka lapset määritetään `parent`-attribuutilla viittaamaan konttiin (`parent="foundry_group"`).
-- Kaikki ryhmän sisäiset elementit käyttävät ryhmän paikallista koordinaatistoa (0,0 kontissa).
+## Styling & Layout
+- Use draw.io style keys (`shape`, `rounded`, `whiteSpace`, `html`, `fillColor`, `strokeColor`, …).
+- Color palette: UI/API `#dae8fc/#6c8ebf`, Search `#d5e8d4/#82b366`, GenAI `#e1d5e7/#9673a6`, Safety `#f8cecc/#b85450`, notes `shape=note` + grey fill.
+- Flow left→right (widget → API → Search → GenAI → Safety) with ~50–150 px margins.
 
-## 4. Tyylit ja värit
-- Käytä valmiita draw.io-tyyliavaimia kuten `shape`, `rounded`, `whiteSpace`, `html`, `fillColor`, `strokeColor` jne.
-- Pidä nykyinen väripaletti:
-  - Sinertävä (`#dae8fc` / `#6c8ebf`) käyttöliittymä- ja API-kerrokselle.
-  - Vihertävä (`#d5e8d4` / `#82b366`) hakukomponenteille.
-  - Violetin sävy (`#e1d5e7` / `#9673a6`) GenAI-kerrokselle.
-  - Punainen kilpi (`#f8cecc` / `#b85450`) Content Safety -solmulle.
-  - Muistilaput ja muistiinpanot `shape=note` + harmaa tausta.
+## Validation
+- Deliver plain XML (no comments or external includes).
+- Run `python3 validate_xml.py` before importing or embedding.
 
-## 5. Sivuasettelu
-- Nykyinen piirros käyttää `pageWidth="1200"` ja `pageHeight="900"`. Jos tuot uusi kaavio, pysy lähellä näitä arvoja, jotta iframe-näkymä toimii.
-- Elementit on tasattu 50–150 px marginaaleilla ja kulkevat päälinjana vasemmalta oikealle. Uusien komponenttien olisi hyvä noudattaa samaa kulkusuuntaa.
-
-## 6. Vienti ja validointi
-- Muista, että selainpohjainen editori lukee XML:n sellaisenaan ilman palvelinta. Älä lisää ulkoisia riippuvuuksia tai kommentteja, jotka rikkovat `mxfile`-rakennetta.
-- Tarkista paikallisesti `python3 validate_xml.py` varmistaaksesi XML-syntaksin ennen editoriin lataamista.
-
-Kun nämä ehdot täyttyvät, `diagram.xml` voidaan liittää suoraan `index.html`-tiedoston `diagramXML`-muuttujaan tai tuoda editoriin `File > Import From...` -toiminnolla ilman virheilmoituksia.
+Following these rules keeps `diagram.xml` drop-in ready for `index.html` and for `File > Import From…` inside diagrams.net.

@@ -7,6 +7,7 @@ This project hosts a single-page helper that embeds the diagrams.net (draw.io) e
 - `diagram.xml` – Standalone draw.io file (Finnish labels) that mirrors the inline XML string in `index.html` for easy editing/importing.
 - `DIAGRAM_GUIDE.md` – Constraints for future AI agents so they output draw.io-compatible structures.
 - `validate_xml.py` – Simple well-formedness check for `diagram.xml` using Python's `xml.etree.ElementTree`.
+- `generate_html.py` – Utility that snapshots the current diagram into a timestamped HTML page containing the same embedded editor.
 - `CHANGELOG.md` – Release notes.
 
 ## Running the Editor Locally
@@ -18,6 +19,10 @@ This project hosts a single-page helper that embeds the diagrams.net (draw.io) e
 - To tweak the diagram in draw.io, edit it directly inside the iframe and then export (`File → Export as…`) or save (`File → Save As…`).
 - To update the bundled XML, export to XML from the editor, replace the contents of `diagram.xml`, and copy the same XML into the `diagramXML` string inside `index.html` (or automate this step).
 - Before importing into draw.io, you can run `python3 validate_xml.py` to ensure the XML is well-formed.
+
+## Generating Timestamped Snapshots
+- Run `python3 generate_html.py` to produce `diagram_editor_<timestamp>.html` that embeds the latest `diagram.xml` plus the iframe logic.
+- Use `python3 generate_html.py --output custom_file.html` if you want to control the filename.
 
 ## Generating New Diagrams via AI
 If you ask an AI model to produce a new diagram, point it to `DIAGRAM_GUIDE.md`. The guide explains:
