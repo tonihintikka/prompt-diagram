@@ -1,2 +1,5 @@
 __pycache__/
 .venv/
+diagram_fi_original.xml
+.DS_Store
+snapshots/.DS_Store
