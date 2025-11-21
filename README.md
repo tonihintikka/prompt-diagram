@@ -18,14 +18,13 @@ This project hosts a single-page helper that embeds the diagrams.net (draw.io) e
 3. Use the **Live Editor** tile to open `editor.html`. In static mode the Save button will not persist automatically, but you can still export manually.
 
 ### Autosave mode (Flask API)
-1. Install dependencies: `pip install -r requirements.txt`.
-2. Run the backend: `python3 app.py` (defaults to http://127.0.0.1:5000).
-3. Open `http://127.0.0.1:5000/index.html` (Flask serves the static files too).
-4. In `editor.html`, the toolbar button **Tallenna snapshot** and the diagrams.net **Save** action both trigger the autosave API. Every save:
+1. Quick start: run `./run_server.sh`. The script creates `.venv/`, installs requirements, launches `app.py`, and opens your browser at [http://127.0.0.1:5000/index.html](http://127.0.0.1:5000/index.html).
+2. Manual start (if you prefer): `python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && python3 app.py`.
+3. In `editor.html`, the toolbar button **Tallenna snapshot** and the diagrams.net **Save** action both trigger the autosave API. Every save:
    - overwrites the active working file (`diagram_workflow.xml` or fallback `diagram.xml`),
    - writes a raw copy under `snapshots/raw/diagram_<timestamp>.xml`,
    - invokes `generate_html.py` to create a timestamped HTML snapshot and refresh `snapshots/index.html`.
-5. The latest versions are visible from the homepage iframe (`snapshots/index.html`) and via `GET /api/versions`.
+4. The latest versions are visible from the homepage iframe (`snapshots/index.html`) and via `GET /api/versions`.
 
 ## Editing the Diagram
 - To tweak the diagram in draw.io, edit it directly inside the iframe and then export (`File → Export as…`) or save (`File → Save As…`).
